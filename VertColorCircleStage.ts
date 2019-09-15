@@ -188,3 +188,25 @@ class VertColorCircle {
         this.curr.startUpdating(cb)
     }
 }
+
+class Renderer {
+
+    vcc : VertColorCircle = new VertColorCircle()
+    animator : Animator = new Animator()
+
+    render(context : CanvasRenderingContext2D) {
+        this.vcc.draw(context)
+    }
+
+    handleTap(cb : Function) {
+        this.vcc.startUpdating(() => {
+            this.animator.start(() => {
+                cb()
+                this.vcc.update(() => {
+                    this.animator.stop()
+                    cb()
+                })
+            })
+        })
+    }
+}
