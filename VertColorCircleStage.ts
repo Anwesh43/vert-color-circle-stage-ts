@@ -120,3 +120,48 @@ class Animator {
         }
     }
 }
+
+class VCCNode {
+
+    prev : VCCNode
+    next : VCCNode
+    state : State = new State()
+
+    constructor(private i : number) {
+        this.addNeighbor()
+    }
+
+    addNeighbor() {
+        if (this.i < colors.length - 1) {
+            this.next = new VCCNode(this.i + 1)
+            this.next.prev = this
+        }
+    }
+
+    draw(context : CanvasRenderingContext2D, sc : number, currI : number) {
+        DrawingUtil.drawCCNode(context, this.i, this.state.scale, sc, currI)
+        if (this.state.scale > 0 && this.next) {
+            this.next.draw(context, this.state.scale, currI)
+        }
+    }
+
+    update(cb : Function) {
+        this.state.update(cb)
+    }
+
+    startUpdating(cb : Function) {
+        this.state.startUpdating(cb)
+    }
+
+    getNext(dir : number, cb : Function) : VCCNode {
+        var curr : VCCNode = this.prev
+        if (dir == 1) {
+            curr = this.next
+        }
+        if (curr != null) {
+            return curr
+        }
+        cb()
+        return this
+    }
+}
