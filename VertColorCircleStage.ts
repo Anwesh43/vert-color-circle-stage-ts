@@ -5,6 +5,18 @@ const scGap : number = 0.01 / circles
 const colors : Array<String> = ["#1A237E", "#E65100", "#64DD17", "#9C27B0", "#f44336"]
 const backColor : String = "#BDBDBD"
 
+class ScaleUtil {
+
+    static maxScale(scale : number, i : number, n : number) : number {
+        return Math.max(0, scale - i / n)
+    }
+
+    static divideScale(scale : number, i : number, n : number) : number {
+        return Math.min(1 / n, ScaleUtil.maxScale(scale, i, n)) * n
+    }
+
+}
+
 class VertColorCircleStage {
 
     canvas : HTMLCanvasElement = document.createElement('canvas')
