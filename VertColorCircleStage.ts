@@ -127,7 +127,7 @@ class VCCNode {
     next : VCCNode
     state : State = new State()
 
-    constructor(private i : number) {
+    constructor(public i : number) {
         this.addNeighbor()
     }
 
@@ -163,5 +163,28 @@ class VCCNode {
         }
         cb()
         return this
+    }
+}
+
+class VertColorCircle {
+
+    root : VCCNode = new VCCNode(0)
+    curr : VCCNode = this.root
+    dir : number = 1
+
+    draw(context : CanvasRenderingContext2D) {
+        this.root.draw(context, 0, this.curr.i)
+    }
+
+    update(cb : Function) {
+        this.curr.update(() => {
+            this.curr = this.curr.getNext(this.dir, () => {
+                this.dir *= -1
+            })
+        })
+    }
+
+    startUpdating(cb : Function) {
+        this.curr.startUpdating(cb)
     }
 }
