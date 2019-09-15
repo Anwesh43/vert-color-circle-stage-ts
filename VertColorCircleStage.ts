@@ -14,7 +14,36 @@ class ScaleUtil {
     static divideScale(scale : number, i : number, n : number) : number {
         return Math.min(1 / n, ScaleUtil.maxScale(scale, i, n)) * n
     }
+}
 
+class DrawingUtil {
+
+    static drawClippedCircle(context : CanvasRenderingContext2D, r : number, y : number, h : number) {
+        context.beginPath()
+        context.arc(0, 0, r, 0, 2 * Math.PI)
+        context.clip()
+        context.fillRect(-r, -r + y, 2 * r, h)
+    }
+
+    static drawColorCircle(context : CanvasRenderingContext2D, i : number, sc1 : number, sc2 : number, size : number, shouldDraw : boolean) {
+        var h : number = 0
+        if (sc2 > 0) {
+            h = 2 * size * sc2
+        }
+        if (shouldDraw) {
+            h = 2 * size * (1 - sc1)
+        }
+        context.save()
+        context.translate(w / 2, i * 2 * size + size)
+        DrawingUtil.drawClippedCircle(context, size, 2 * size * sc1, h)
+        context.restore()
+    }
+
+    static drawCCNode(context : CanvasRenderingContext2D, i : number, scale : number, sc : number, currI : number) {
+        context.fillStyle = colors[i]
+        const size : number = h / (2 * circles)
+        DrawingUtil.drawColorCircle(context, i, scale, sc, size, currI == i)
+    }
 }
 
 class VertColorCircleStage {
