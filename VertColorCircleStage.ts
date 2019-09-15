@@ -4,6 +4,7 @@ const circles : number = 5
 const scGap : number = 0.01 / circles
 const colors : Array<String> = ["#1A237E", "#E65100", "#64DD17", "#9C27B0", "#f44336"]
 const backColor : String = "#BDBDBD"
+const delay : number = 20
 
 class ScaleUtil {
 
@@ -39,10 +40,16 @@ class DrawingUtil {
         context.restore()
     }
 
+    static drawMultiCircles(context : CanvasRenderingContext2D, sc1 : number, sc2 : number, size : number, shouldDraw : boolean) {
+        for (var i = 0; i < circles; i++) {
+            DrawingUtil.drawColorCircle(context, i, ScaleUtil.divideScale(sc1, i, circles), ScaleUtil.divideScale(sc2, i, circles), size, shouldDraw)
+        }
+    }
+
     static drawCCNode(context : CanvasRenderingContext2D, i : number, scale : number, sc : number, currI : number) {
         context.fillStyle = colors[i]
         const size : number = h / (2 * circles)
-        DrawingUtil.drawColorCircle(context, i, scale, sc, size, currI == i)
+        DrawingUtil.drawMultiCircles(context, scale, sc, size, currI == i)
     }
 }
 
@@ -77,6 +84,7 @@ class VertColorCircleStage {
         const stage : VertColorCircleStage = new VertColorCircleStage()
         stage.initCanvas()
         stage.render()
+        stage.handleTap()
 
     }
 }
@@ -89,6 +97,7 @@ class State {
 
     update(cb : Function) {
         this.scale += scGap * this.dir
+        console.log(this.scale)
         if (Math.abs(this.scale - this.prevScale) > 1) {
             this.scale = this.prevScale + this.dir
             this.dir = 0
@@ -113,7 +122,7 @@ class Animator {
     start(cb : Function) {
         if (!this.animated) {
             this.animated = true
-            this.interval = setInterval(cb, 50)
+            this.interval = setInterval(cb, delay)
         }
     }
 
@@ -121,6 +130,7 @@ class Animator {
         if (this.animated) {
             this.animated = false
             clearInterval(this.interval)
+            console.log("stopping")
         }
     }
 }
@@ -185,6 +195,7 @@ class VertColorCircle {
             this.curr = this.curr.getNext(this.dir, () => {
                 this.dir *= -1
             })
+            cb()
         })
     }
 
@@ -204,6 +215,7 @@ class Renderer {
 
     handleTap(cb : Function) {
         this.vcc.startUpdating(() => {
+            console.log("coming here")
             this.animator.start(() => {
                 cb()
                 this.vcc.update(() => {
